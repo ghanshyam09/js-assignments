@@ -46,7 +46,7 @@ function getComposition(f, g) {
  *
  */
 function getPowerFunction(exponent) {
-  return (x) => x ** exponent;
+  return (x)=>Math.pow(x, exponent);
 }
 
 /**

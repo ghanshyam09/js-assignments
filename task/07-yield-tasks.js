@@ -132,6 +132,7 @@ function* breadthTraversalTree(root) {
     var v = s.shift();
     yield v;
     if (!v.children) continue;
+
     for (var edges of v.children) s.push(edges);
   }
 
@@ -152,17 +153,15 @@ function* breadthTraversalTree(root) {
  *   [ 1, 3, 5, ... ], [ -1 ] => [ -1, 1, 3, 5, ...]
  */
 function* mergeSortedSequences(source1, source2) {
-  // var iterator1 = source1();
-  // var iterator2 = source2();
-  // var arr = [];
-  // for (let i = 0; i < 251; i++) {
-  //   arr.push(iterator1.next().value);
-  //   arr.push(iterator2.next().value);
-  // }
-  // arr.sort((a, b) => {
-  //   return a - b;
-  // });
-  // yield* arr;
+  var iterator1 = source1();
+  var iterator2 = source2();
+  var arr = [];
+  arr.push(iterator1.next().value);
+  arr.push(iterator2.next().value);
+  arr.sort((a, b) => {
+    return a - b;
+  });
+  yield* arr;
 }
 
 module.exports = {

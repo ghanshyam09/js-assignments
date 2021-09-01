@@ -56,6 +56,8 @@ function getJSON(obj) {
  */
 function fromJSON(proto, json) {
   return Object.setPrototypeOf(JSON.parse(json), proto);
+
+  // throw new Error("Not implemented");
 }
 
 /**
@@ -105,34 +107,102 @@ function fromJSON(proto, json) {
  *
  *  For more examples see unit tests.
  */
-
+// var obj={
+//   id:id(value)
+// }
 const cssSelectorBuilder = {
   element: function (value) {
-    throw new Error("Not implemented");
+    let obj = Object.create(this);
+    if (obj.elementValue) {
+      throw new Error(
+        "Element, id and pseudo-element should not occur more then one time inside the selector"
+      );
+    } else {
+      obj.elementValue = value;
+    }
+    this.check(obj, obj.elementValue);
+    return obj;
   },
 
   id: function (value) {
-    throw new Error("Not implemented");
+    let obj = Object.create(this);
+    if (obj.idValue) {
+      throw new Error(
+        "Element, id and pseudo-element should not occur more then one time inside the selector"
+      );
+    } else {
+      obj.idValue = `#${value}`;
+    }
+    this.check(obj, obj.idValue);
+    return obj;
   },
 
   class: function (value) {
-    throw new Error("Not implemented");
+    let obj = Object.create(this);
+    obj.classValue = `${obj.classValue || ""}.${value}`;
+    this.check(obj, obj.classValue);
+    return obj;
   },
 
   attr: function (value) {
-    throw new Error("Not implemented");
+    let obj = Object.create(this);
+    obj.attrValue = `${obj.attrValue || ""}[${value}]`;
+    this.check(obj, obj.attrValue);
+    return obj;
   },
 
   pseudoClass: function (value) {
-    throw new Error("Not implemented");
+    let obj = Object.create(this);
+    obj.pseudoClassValue = `${obj.pseudoClassValue || ""}:${value}`;
+    this.check(obj, obj.pseudoClassValue);
+    return obj;
   },
 
   pseudoElement: function (value) {
-    throw new Error("Not implemented");
+    let obj = Object.create(this);
+    if (obj.pseudoElementValue) {
+      throw new Error(
+        "Element, id and pseudo-element should not occur more then one time inside the selector"
+      );
+    } else {
+      obj.pseudoElementValue = `::${value}`;
+    }
+    this.check(obj, obj.pseudoElementValue);
+    return obj;
   },
 
   combine: function (selector1, combinator, selector2) {
-    throw new Error("Not implemented");
+    let obj = Object.create(this);
+    obj.combineValue = `${
+      obj.combineValue || ""
+    }${selector1.stringify()} ${combinator} ${selector2.stringify()}`;
+    return obj;
+  },
+
+  stringify: function () {
+    return `${this.combineValue || ""}${this.elementValue || ""}${
+      this.idValue || ""
+    }${this.classValue || ""}${this.attrValue || ""}${
+      this.pseudoClassValue || ""
+    }${this.pseudoElementValue || ""}`;
+  },
+
+  check: function (currObj, selector) {
+    const orderArray = [
+      currObj.elementValue,
+      currObj.idValue,
+      currObj.classValue,
+      currObj.attrValue,
+      currObj.pseudoClassValue,
+      currObj.pseudoElementValue,
+    ];
+    orderArray.forEach((item, index) => {
+      if (item && index > orderArray.indexOf(selector)) {
+        throw new Error(
+          "Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element"
+        );
+      }
+    });
   },
 };
 
